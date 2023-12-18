@@ -1,60 +1,42 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Data;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Unity.VisualScripting;
 
-
-interface IMouseData
+interface IMonitorMouseData
 {
+
     Vector3 GetMousePosition();
+    void IsPointerNotMoving();
 }
-
-interface IConfigCollider
+interface IMonitorTime
 {
-    void ConfigBoxCollider();
+
 }
 
 public class Monitor :
     MonoBehaviour,
     IPointerClickHandler,
     IPointerMoveHandler,
-    IMouseData,
-    IConfigCollider
+    IMonitorMouseData,
+    IEventSystemHandler
 {
+
+    private Vector3 lastMousePosition;
     void Start()
     {
-        ConfigBoxCollider();
         Debug.Log("[monitor-status]: Script started on gameobject '" + this.gameObject.name + "' id:" + this.gameObject.GetInstanceID());
     }
 
     // Update is called once per frame
     void Update()
     {
-
-    }
-    public void ConfigBoxCollider()
-    {
-        try
-        {
-
-            if (!this.gameObject.GetComponent<BoxCollider2D>())
-            {
-                throw new UnityException("[monitor-error-internals]: The current gameobject doesn't have a box collider 2d.");
-            }
-
-            if (!this.gameObject.GetComponent<BoxCollider2D>().isActiveAndEnabled)
-            {
-                throw new UnityException("[monitor-error-internals]: The current gameobject aren't active. Please, active it in Unity Inspector.");
-            }
-
-            this.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
-            this.gameObject.GetComponent<BoxCollider2D>().autoTiling = true;
-            this.gameObject.GetComponent<BoxCollider2D>().size = this.gameObject.GetComponent<RectTransform>().rect.size;
-        }
-        catch(UnityException err)
-        {
-            throw err;
-        }
+        IsPointerNotMoving();
+        lastMousePosition = GetMousePosition();
     }
 
     public Vector3 GetMousePosition()
@@ -64,31 +46,39 @@ public class Monitor :
 
     public void OnPointerClick(PointerEventData eventData)
     {
+
         string side = "undefined";
 
-        if (Input.GetMouseButtonDown(0))
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
             side = "left";
         }
-        else if (Input.GetMouseButtonDown(1))
+
+        else if (eventData.button == PointerEventData.InputButton.Right)
         {
             side = "right";
         }
-        else if (Input.GetMouseButtonDown(2))
+
+        else if (eventData.button == PointerEventData.InputButton.Middle)
         {
             side = "middle";
         }
 
-        Debug.Log("[monitor-mouse-click]: The " + side + " button has been pressed.");
+
+        Debug.Log("[monitor-mouse-click]: The " + side + " has been pressed.");
     }
 
     public void OnPointerMove(PointerEventData eventData)
     {
-        Vector3 pos = GetMousePosition();
-        Debug.Log("[monitor-mouse-move]: The pointer has changed direction.");
+        Vector3 pos  = GetMousePosition();
         Debug.Log("[monitor-mouse-move]: Current position:(" + pos.x + "," + pos.y + "," + pos.z + ")");
     }
-
-    
+    public void IsPointerNotMoving()
+    {
+        if (lastMousePosition == GetMousePosition())
+        {
+            Debug.Log("[monitor-mouse-not-move]: The pointer is in the same position.");
+        }
+    }
 
 }
