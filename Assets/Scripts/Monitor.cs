@@ -5,17 +5,14 @@ using UnityEngine.EventSystems;
 
 interface IMonitorMouseData
 {
-    //  Mouse
-    Vector3 GetMousePosition();
-    void IsPointerNotMoving();
-
-    // Clicking:
-    void ClickOnRightButton();
-    void ClickOnLeftButton();
-    void ClickOnMiddleButton();
-
-    void InitClickHandler();
-
+    Vector3 GetMousePosition(); // Returns the mouse position.
+    void IsPointerNotMoving();  // Verify if pointer is changing coordinates.
+    void ClickOnRightButton();  // Add a click in a counter that's monitoring right click's quantities.
+    void ClickOnLeftButton();   // Add a click in a counter that's monitoring left click's quantities.
+    void ClickOnMiddleButton(); // Add a click in a counter that's monitoring middle click's quantities.
+    void InitClickHandler();    // Init clickHandler, reseting values to zero, to avoid log errors.
+    //  To implement later:
+    //void ShowAllCounterInfo(); 
 }
 interface IMonitorTime
 {
@@ -31,18 +28,7 @@ public class Monitor :
     IMonitorMouseData,
     IMonitorTime
 {
-
-    //  Crucial attributes
-
-    private Camera getCamera;
-    private Ray ray;
-    private RaycastHit raycastHit;
-
-
-
-    //  Attributes declaration below.
-
-
+    
     //  IMonitorMouseData
     private Vector3 lastMousePosition;
     private int rightButtonClick;
@@ -50,24 +36,18 @@ public class Monitor :
     private int middleButtonClick;
 
     //  IMonitorTime
-    private Stopwatch timeCounter = new Stopwatch();
+    private Stopwatch timeCounter = new Stopwatch(); // This object allow to count time, to use in logs.
 
     // Log Classes... I have to implement later...
     //LogController logController = new LogController();
 
-
-    // Auxiliar variables
-
-    bool alreadyLog = false;
-
     void Awake()
     {
-        this.StartMonitoringTime();
-        this.InitClickHandler();
-        UnityEngine.Debug.Log("[monitor-status]: Script started on gameobject '" + this.gameObject.name + "' id:" + this.gameObject.GetInstanceID());
+        this.StartMonitoringTime(); // This object is used to count the execution time of the script.
+        this.InitClickHandler(); 
+        UnityEngine.Debug.Log("[monitor-status-awake]: Script started on gameobject '" + this.gameObject.name + "' id:" + this.gameObject.GetInstanceID()); // Log to show user that script is on!
     }
 
-    // Update is called once per frame
     void Update()
     {
         IsPointerNotMoving();
@@ -116,10 +96,12 @@ public class Monitor :
     }
     public void IsPointerNotMoving()
     {
-        if (lastMousePosition == GetMousePosition() && !alreadyLog)
+        if (lastMousePosition == GetMousePosition())
         {       
             UnityEngine.Debug.Log("[monitor-mouse-not-move]: The pointer is in the same position.");
         }
+
+        lastMousePosition = GetMousePosition();
     }
     public void StartMonitoringTime()
     {
@@ -148,24 +130,6 @@ public class Monitor :
     public void InitClickHandler()
     {
         this.rightButtonClick = this.leftButtonClick = this.middleButtonClick = 0;
-    }
-
-    public void getMainCamera()
-    {
-        try
-        {
-            getCamera = FindObjectOfType<Camera>();
-
-            if (getCamera == null)
-            {
-                throw new UnityException("[monitor-getMainCamera-err]: Cannot find an valid camera.");
-            }
-        }
-        catch(UnityException err)
-        {
-            throw err;
-        }
-       
     }
 
 }
