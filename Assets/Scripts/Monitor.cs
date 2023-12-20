@@ -1,9 +1,7 @@
-using JetBrains.Annotations;
 using System;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
 
 interface IMonitorMouseData
 {
@@ -34,7 +32,15 @@ public class Monitor :
     IMonitorTime
 {
 
-    //  Attributes declaration
+    //  Crucial attributes
+
+    private Camera getCamera;
+    private Ray ray;
+    private RaycastHit raycastHit;
+
+
+
+    //  Attributes declaration below.
 
 
     //  IMonitorMouseData
@@ -48,6 +54,11 @@ public class Monitor :
 
     // Log Classes... I have to implement later...
     //LogController logController = new LogController();
+
+
+    // Auxiliar variables
+
+    bool alreadyLog = false;
 
     void Awake()
     {
@@ -93,13 +104,20 @@ public class Monitor :
     }
     public void OnPointerMove(PointerEventData eventData)
     {
-        Vector3 pos = GetMousePosition();
-        UnityEngine.Debug.Log("[monitor-mouse-move]: Current position:(" + pos.x + "," + pos.y + "," + pos.z + ")");
+        try
+        {        
+            Vector3 pos = GetMousePosition();
+            UnityEngine.Debug.Log("[monitor-mouse-move]: Current position:(" + pos.x + "," + pos.y + "," + pos.z + ")");
+        }
+        catch (UnityException err)
+        {
+            throw err;
+        }
     }
     public void IsPointerNotMoving()
     {
-        if (lastMousePosition == GetMousePosition())
-        {
+        if (lastMousePosition == GetMousePosition() && !alreadyLog)
+        {       
             UnityEngine.Debug.Log("[monitor-mouse-not-move]: The pointer is in the same position.");
         }
     }
@@ -130,6 +148,24 @@ public class Monitor :
     public void InitClickHandler()
     {
         this.rightButtonClick = this.leftButtonClick = this.middleButtonClick = 0;
+    }
+
+    public void getMainCamera()
+    {
+        try
+        {
+            getCamera = FindObjectOfType<Camera>();
+
+            if (getCamera == null)
+            {
+                throw new UnityException("[monitor-getMainCamera-err]: Cannot find an valid camera.");
+            }
+        }
+        catch(UnityException err)
+        {
+            throw err;
+        }
+       
     }
 
 }

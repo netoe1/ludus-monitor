@@ -203,8 +203,7 @@ public class LogController
 
             if (logToExport != null)
             {
-                // Implementar a lógica de exportação aqui
-                // Pode ser um arquivo, console, banco de dados, etc.
+               // Implement later.
                 Debug.Log("Exporting log:\n" + logToExport.ToString());
             }
             else
