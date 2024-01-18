@@ -1,31 +1,23 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
-using UnityEditor.PackageManager;
-using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 
-
-// Log types is an other idea.
-
-    //enum log_types
-    //{
-    //    time,
-    //    click,
-    //    button
-    //};
+// Basicamente, utilizando como conceito primordial as tabelas de banco de dados, o nosso LOG Geral será um grande tabela, com vários logs.
+// A classe LogCell seria uma Coluna; logController seria a tabela.
+// Então, cada célula do log, teria um id, título, descrição e o tempo de execução em que foi executado.
+// Depois, esses dados serão adicionados no LogController e assim serão submetidos.
+// Por enquanto, eles estão em formato de string, mas pretendemos colocá-los em JSON, e assim exportar para um banco de dados.
 
 
-public class LogCell
+
+
+public class LogCell 
 {
     private string id;
     private string title;
     private string description;
     private string date;
     private TimeSpan timeElapsed;
-
-
 
     public LogCell(string __title, string __description, string __date, TimeSpan timeElapsed)
     {
@@ -131,15 +123,20 @@ public class LogCell
 }
 public class LogController
 {
-    private List<LogCell> logCells = new List<LogCell>();
-    private int counter = 0;
+    private List<LogCell> logCells = new List<LogCell>(); // Cria uma lista de colunas;
+    private int counter = 0; // Contador de colunas.
+
+    //  OBS: Esse contador é uma alternativa mais eficiente, pois ele irá sempre ser adicionado, em vez de contar os elementos da lista.
+    // Também, este contador deve ser imutável, ele será utilizado com id. Por execução, ele deve ser uníco. Então, caso ocorra algum erro, ele será adicionado automaticamente
+    // e o índice onde o erro ocorreu será anulado.
+
     public void addLogCell(LogCell newLog)
     {
         try
         {
             if (newLog == null)
             {
-                throw new UnityException("[monitor-logController-addLogCell-err]: You must provide a LogCell object in addAnLogCell() to create a log.");
+                throw new UnityException("[+LUDUS-logcontroller-err]: Você deve prover uma célula de log para submeter.");
             }
             counter++;
             newLog.setId(counter.ToString());
@@ -164,7 +161,7 @@ public class LogController
             }
             else
             {
-                throw new UnityException("[monitor-logController-removeLogCell-err]: LogCell with id " + id + " not found.");
+                throw new UnityException("[+LUDUS-logcontroller-err]: O logCell que você informou, não foi encontrado.");
             }
         }
         catch (UnityException err)
@@ -186,7 +183,7 @@ public class LogController
             }
             else
             {
-                throw new UnityException("[monitor-logController-editLogCell-err]: LogCell with id " + id + " not found.");
+                throw new UnityException("[+LUDUS-logcontroller-err]: Não foi possível encontrar o logCell com o id '" + id + "' para edição.");
             }
         }
         catch (UnityException err)
@@ -203,12 +200,11 @@ public class LogController
 
             if (logToExport != null)
             {
-               // Implement later.
                 Debug.Log("Exporting log:\n" + logToExport.ToString());
             }
             else
             {
-                throw new UnityException("[monitor-logController-exportLog-err]: LogCell with id " + id + " not found.");
+                throw new UnityException("[+LUDUS-logcontroller-err]: Não foi possível encontrar o logCell com o id '" + id + "' para exportar.");
             }
         }
         catch (UnityException err)
