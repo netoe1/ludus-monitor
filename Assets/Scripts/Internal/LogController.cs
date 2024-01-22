@@ -125,6 +125,9 @@ public class LogController
 {
     private List<LogCell> logCells = new List<LogCell>(); // Cria uma lista de colunas;
     private int counter = 0; // Contador de colunas.
+    private string title;
+    private string description;
+    
 
     //  OBS: Esse contador é uma alternativa mais eficiente, pois ele irá sempre ser adicionado, em vez de contar os elementos da lista.
     // Também, este contador deve ser imutável, ele será utilizado com id. Por execução, ele deve ser uníco. Então, caso ocorra algum erro, ele será adicionado automaticamente

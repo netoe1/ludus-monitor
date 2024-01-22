@@ -1,5 +1,7 @@
+using JetBrains.Annotations;
 using System;
 using System.Diagnostics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -18,8 +20,6 @@ interface IMonitorMouseData     // Essa interface é responsável por obter os dad
     void ClickOnLeftButton();   //  Adiciona um clique na váriavel de controle de nro de cliques para o botão esquerdo.
     void ClickOnMiddleButton(); //  Adiciona um clique na váriavel de controle de nro de cliques para o botão do meio.
     void InitClickHandler();    //  Inicia o handler de click, ou seja, "inicia a interface", zerando todos os valores que serão utilizados.
-    //  To implement later:
-    //void ShowAllCounterInfo(); 
 }
 interface IMonitorTime          //  Essa interface é responsável por gerenciar os contadores de tempo que serão utilizados.
 {

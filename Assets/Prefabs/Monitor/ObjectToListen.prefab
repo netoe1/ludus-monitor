@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8548765328682773280}
   - component: {fileID: 6714379710852490429}
   m_Layer: 5
-  m_Name: ObjectToTest
+  m_Name: ObjectToListen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
