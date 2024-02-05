@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using Unity.VisualScripting;
+using Ludus.SDK.Utils;
 
 // Basicamente, utilizando como conceito primordial as tabelas de banco de dados, o nosso LOG Geral será um grande tabela, com vários logs.
 // A classe LogCell seria uma Coluna; logController seria a tabela.
@@ -11,7 +11,7 @@ using Unity.VisualScripting;
 // Por enquanto, eles estão em formato de string, mas pretendemos colocá-los em JSON, e assim exportar para um banco de dados.
 
 
-namespace Ludus.sdk.exportData
+namespace Ludus.SDK.ExportData
 {
     #region LOG_CELL 
     // Criando a classe LogCell, que seriam as colunas da nossa tabela CreateLog.
@@ -21,7 +21,7 @@ namespace Ludus.sdk.exportData
         2   - Title: Título da célula, pode ser qualquer coisa, mas normalmente para um boa prática, recomendamos colocar um título que seja 
             correspondente ao uso.
         3   - Data: São as informações sobre o log. Você pode covertê-los a um JSON string, e colocar ali. Nesta versão, por enquanto, só há esta opção.
-        4   - Date: Pega a data e hora do momento e registra, é feito de foram automática, você nem precisa se preocupar  com isso.
+        4   - Date: Pega a description e hora do momento e registra, é feito de foram automática, você nem precisa se preocupar  com isso.
         5   - TimeElapsed: é um atributo que diz respeito ao tempo de execução do script.
      */
     [System.Serializable]
@@ -29,37 +29,33 @@ namespace Ludus.sdk.exportData
     {
         public string id;
         public string title;
-        public string data;
+        public string description;
         public string date;
-
-        public LogCell(string __title, string __description)
+        public LogCell(string title = "", string description = "")
         {
             try
             {
-                if (__title != null && __description != null)
+                if (title == "")
                 {
-                    this.id = "To set.";
-                    this.title = __title;
-                    this.data = __description;
-                    this.date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                    return;
+                    throw new UnityException("[LogCell-module-cell-err]: O título deve ser obrigatório. ");
                 }
 
-                throw new UnityException("[monitor-log-cell-err]:Error to add an LogCell");
+                if (description == "")
+                {
+                    description = "Não informada";
+                }
+
+                this.id = "To set.";
+                this.title = title;
+                this.description = description;
+                this.date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
             }
             catch (UnityException err)
             {
                 throw err;
             }
-
-
         }
-
-        public override string ToString()
-        {
-            return "Title:" + this.title + "\nDescription:" + this.data + "\nDate:" + this.date + "\n";
-        }
-
     }
     #endregion LOG_CELL
 
@@ -75,47 +71,46 @@ namespace Ludus.sdk.exportData
     [System.Serializable]
     public class CreateLog
     {
+        public string title; // Título do log.
+        public string description;
         public List<LogCell> reports = new List<LogCell>(); // Cria uma lista de colunas;
         private int counter = 0; // Contador de colunas.
-        public string title; // Título do log.
-        public string data;
-
 
         //  OBS: Esse contador é uma alternativa mais eficiente, pois ele irá sempre ser adicionado, em vez de contar os elementos da lista.
         // Também, este contador deve ser imutável, ele será utilizado com id. Por execução, ele deve ser uníco. Então, caso ocorra algum erro, ele será adicionado automaticamente
         // e o índice onde o erro ocorreu será anulado.
 
-        public CreateLog(string title = "",string data = "")
+        public CreateLog(string title = "", string description = "")
         {
             try
             {
-                if(title == "")
+                if (title == "")
                 {
-                    throw new UnityException("[+LUDUS-createlog-object-err]:O título é obrigatório para a criação do objeto.");
+                    throw new UnityException("[+LUDUS-createlog-object-err]:O título é obrigatório.");
                 }
 
-                if(data == "")
+                if (description == "")
                 {
-                    data = "Não informada.";
+                    description = "Não informada.";
                 }
 
                 this.title = title;
-                this.data = data;
+                this.description = description;
 
             }
-            catch(UnityException err)
+            catch (UnityException err)
             {
                 throw err;
             }
         }
 
-        public void addLogCell(LogCell newLog)
+        public void addCell(LogCell newLog)
         {
             try
             {
                 if (newLog == null)
                 {
-                    throw new UnityException("[+LUDUS-createlog-err]: Você deve prover uma célula de log para submeter.");
+                    throw new UnityException("[+LUDUS-createlog-err]: A célula de log está vazia.");
                 }
                 counter++;
                 newLog.id = counter.ToString();
@@ -128,7 +123,7 @@ namespace Ludus.sdk.exportData
             }
         }
 
-        public void removeLogCellById(string id)
+        public void removeCellById(string id)
         {
             try
             {
@@ -140,7 +135,7 @@ namespace Ludus.sdk.exportData
                 }
                 else
                 {
-                    throw new UnityException("[+LUDUS-createlog-err]: O logCell que você informou, não foi encontrado.");
+                    throw new UnityException("[+LUDUS-createlog-err]: célula não encontrada.");
                 }
             }
             catch (UnityException err)
@@ -149,43 +144,43 @@ namespace Ludus.sdk.exportData
             }
         }
 
-        public void editLogCellById(string id, string newTitle, string newDescription)
-        {
-            try
-            {
-                LogCell logToEdit = reports.Find(log => log.id == id);
+        //public void editLogCellById(string id, string newTitle, string newDescription)
+        //{
+        //    try
+        //    {
+        //        LogCell logToEdit = reports.Find(log => log.id == id);
 
-                if (logToEdit != null)
-                {
-                    logToEdit.title = newTitle;
-                    logToEdit.data = newDescription;
-                }
-                else
-                {
-                    throw new UnityException("[+LUDUS-createlog-err]: Não foi possível encontrar o logCell com o id '" + id + "' para edição.");
-                }
-            }
-            catch (UnityException err)
-            {
-                throw err;
-            }
-        }
+        //        if (logToEdit != null)
+        //        {
+        //            logToEdit.title = newTitle;
+        //            logToEdit.description = newDescription;
+        //        }
+        //        else
+        //        {
+        //            throw new UnityException("[+LUDUS-createlog-err]:Célula com o id '" + id + "' para edição.");
+        //        }
+        //    }
+        //    catch (UnityException err)
+        //    {
+        //        throw err;
+        //    }
+        //} // Depreciado
         public void exportLog()
         {
             try
             {
                 string jsonToExport = "";
-
+                this.addCell(new LogCell("Exportação de arquivo.", "Exportando JSON."));
                 jsonToExport = JsonUtility.ToJson(this);
 
                 string rootFolder = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf('/'));
                 if (rootFolder == null)
                 {
-                    throw new UnityException("[+LUDUS-createlog-exportJSON-err]: Erro ao obter os diretórios da pasta padrão do JSON.");
+                    throw new UnityException("[+LUDUS-createlog-exportJSON-err]: Diretório não encontrado.");
                 }
 
-                string directoryPath = Path.Combine(rootFolder, "Assets", "Reports");
-                string filename = this.title + "-" + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + ".json";
+                string directoryPath = Path.Combine(rootFolder, "Assets", "Resources");
+                string filename = this.title + "-" + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + "-"+ Utils.Utils.genRandomNumAsString(3)  + ".json";
                 string filePath = Path.Combine(directoryPath, filename);
 
                 if (!Directory.Exists(directoryPath))
@@ -194,11 +189,11 @@ namespace Ludus.sdk.exportData
                 }
 
                 using (StreamWriter writer = new StreamWriter(filePath, true))
-                {             
+                {
                     writer.WriteLine(jsonToExport);
                 }
 
-                Debug.Log("Arquivo exportado com sucesso em: " + filePath);
+                Debug.Log("Arquivo exportado com sucesso: " + filePath);
             }
             catch (Exception err)
             {
@@ -206,7 +201,33 @@ namespace Ludus.sdk.exportData
             }
         }
 
+        public void reset()
+        {
+            this.reports.Clear();
+        }
 
+        public void redefine(string title = "", string description = "")
+        {
+            try
+            {
+                if (title == "")
+                {
+                    throw new UnityException("[create-log-module-err]:O título é um parâmetro obrigatório.");
+                }
+
+                if (description == "")
+                {
+                    description = "Não informada";
+                }
+
+                this.title = title;
+                this.description = description;
+            }
+            catch (UnityException err)
+            {
+                throw err;
+            }
+        }
     }
     #endregion CREATE_LOG
 };
