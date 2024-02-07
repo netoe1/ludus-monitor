@@ -96,16 +96,16 @@ namespace Ludus.SDK.ExportData
     public class CreateLog
     {
         public string title; // Título do log.
-        public string description;
+        public string description; // Descrição do log
         public List<LogCell> reports = new List<LogCell>(); // Cria uma lista de colunas;
-        private int counter = 0; // Contador de colunas.
+        private int counter = 0; // Contador de colunas, uso da própria API.
 
-        public CreateLog(string title = "", string description = "");
-        public void addCell(LogCell newLog);
-        public void removeCellById(string id);
-        public void exportLog();
-        public void reset();
-        public void redefine(string title = "", string description = "");
+        public CreateLog(string title = "", string description = ""); // Construtor
+        public void addCell(LogCell newLog); // Adicionar uma célula (coluna)
+        public void removeCellById(string id); // Remover uma célula pelo seu id
+        public void exportLog(); // Exportar o log.
+        public void reset(); // Resetar o objeto
+        public void redefine(string title = "", string description = ""); // Redefinir configurações, sem apagar o conteúdo antigo, como os contadores.
     }
     #endregion CREATE_LOG
 };
@@ -119,7 +119,8 @@ namespace Ludus.SDK.ExportData
   
   using UnityEngine;
   using System;
-  using System.Generic;
+  using System.Generic.Collections;
+  using System;
 
 
   public class Foo: MonoBehavior
@@ -132,12 +133,59 @@ namespace Ludus.SDK.ExportData
           // O título é obrigatório, pois é o que identifica o log; a descrição não é necessária, mas recomendamos pois deixa o uso mais organizado.
 
           CreateLog log = new CreateLog("Meu primeiro Log","Minha descrição");
+
+
           // Agora, você precisar criar as colunas, ou seja, os dados que serão colocados nesta tabela, então para isso, você vai usar o método CreateLog.addCell();
           // Você pode criar em um objeto separado ou instanciar diretamente no parâmetro da função.
+          // Iniciando diretamente no parâmetro da função: new LogCell(string title,string description);
+
+          log.addCell(new LogCell("Número de cliques","10"));
+          log.addCell(new LogCell("Posição do mouse","POS:(1,10,0)"));
+
+          //  Ou
+          LogCell novaColuna = new LogCell("coluna nova","forma separada");
+          log.addCell(novaColuna);
+
+          // Você adicionou com sucesso uma nova coluna!
+
+          // Você consegue remove o log, porém, é necessário saber o seu id. Você consegue saber o id se fez de forma separada,
+          // sendo uma vantagem a quem separa o log.
+
+          log.removeCellById(novaColuna.id); // Caso esse id exista, ele será removido, caso contrário, ocorrerá uma mensagem de erro.
+
+          // Agora, para transformá-lo em um arquivo JSON, você deve usar CreateLog.exportLog();
+
+          log.exportLog(); // Por padrão, o log será exportado na pasta raiz do projeto/Resources.
           
+    
       }
   };
 
   ```
+<h3>Output do arquivo:</h3>
+
+  ```json
+  {
+    "title":"Meu primeiro log",
+    "description":"Minha descrição"
+    "reports":
+    [
+    {
+      "id":"1",
+      "title":"",
+      "description":"",
+      "date":"23/02/2024 23:44:02"
+    },
+    {  
+      "id":"2",
+      "title":"Posição do mouse",
+      "description":"POS(1,10,0)",
+      "date":"23/02/2024 23:44:04"
+    },
+    ]
+  }
+
+  ```  
+
 </p>
 
