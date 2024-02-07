@@ -27,7 +27,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 // O monitor não tem muito mistério, você não precisa saber muito sobre a sua implementação, mas o mais importante é anexá-lo a um gameobject.
-// É só isso que precisa saber; nós procuramos deixar sua implementação tratar o maior número de erros possível, para não estourar um Debug.LogError automático do sistema.
+// É só isso que precisa saber; nós procuramos deixar sua implementação tratar o maior número de erros possível,
+// para não estourar um Debug.LogError automático do sistema.
+// O monitor usa o CreateLog para exportar as informações. Tirando isso, ele é autossuficiente.
+
 public class Monitor :
     MonoBehaviour,
     IPointerClickHandler,
