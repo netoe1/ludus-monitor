@@ -53,10 +53,10 @@ using UnityEngine;
 using System.IO;
 using Ludus.SDK.Utils;
 
-// Basicamente, utilizando como conceito primordial as tabelas de banco de dados, o nosso LOG Geral será um grande tabela, com vários logs.
-// A classe LogCell seria uma Coluna; logController seria a tabela.
-// Então, cada célula do log, teria um id, título, descrição e o tempo de execução em que foi executado.
-// Depois, esses dados serão adicionados no LogController e assim serão submetidos.
+// Basicamente, utilizando como conceito primordial as tabelas de banco de dados, o nosso LOG Geral será um grande tabela, com vários logs;
+// A classe LogCell seria uma Coluna da Tabela Mãe CreateLog;
+// Então, cada célula do log, teria um id, título e descrição;
+// Depois, esses dados serão adicionados no CreateLog e assim serão submetidos com o método de exportar.
 // Por enquanto, eles estão em formato de string, mas pretendemos colocá-los em JSON, e assim exportar para um banco de dados.
 
 
@@ -69,17 +69,17 @@ namespace Ludus.SDK.ExportData
         1   - Id: é o id da tabela a ser gerado, normalmente são representados por um número inteiro em formato de string.
         2   - Title: Título da célula, pode ser qualquer coisa, mas normalmente para um boa prática, recomendamos colocar um título que seja 
             correspondente ao uso.
-        3   - Data: São as informações sobre o log. Você pode covertê-los a um JSON string, e colocar ali. Nesta versão, por enquanto, só há esta opção.
-        4   - Date: Pega a description e hora do momento e registra, é feito de foram automática, você nem precisa se preocupar  com isso.
+        3   - Description São as informações sobre o log. Você pode covertê-los a um JSON string, e colocar ali; ou usar como uma string mesmo, como você preferir.
+        4   - Date: Pega a data e hora do momento e registra, é feito de foram automática, você nem precisa se preocupar com isso.
      */
     [System.Serializable]
     public class LogCell
     {
-        public string id;
-        public string title;
-        public string description;
-        public string date;
-        public LogCell(string title = "", string description = "");
+        public string id; // ID da célula
+        public string title; // Título da célula
+        public string description; // Descrição da célula
+        public string date; // Data e hora
+        public LogCell(string title = "", string description = ""); // Construtor.
     }
     #endregion LOG_CELL
 
@@ -188,4 +188,7 @@ namespace Ludus.SDK.ExportData
   ```  
 
 </p>
+
+<h1>Use com responsabilidade e se tiverdúvidas me chame.</h1>
+<p>A documentação poderá sofrer mudanças com o avanço do projeto, então sempre acompanhe as versões mais atualizadas.</p>
 
