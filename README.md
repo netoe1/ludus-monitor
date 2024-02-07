@@ -189,6 +189,7 @@ namespace Ludus.SDK.ExportData
 
 </p>
 
-<h1>Use com responsabilidade e se tiverdúvidas me chame.</h1>
-<p>A documentação poderá sofrer mudanças com o avanço do projeto, então sempre acompanhe as versões mais atualizadas.</p>
+<h1>Use com responsabilidade e se tiver dúvidas, entre em contato.</h1>
+<h3>Sempre estaremos de portas abertas para te ajudar no que for preciso. </h3>
+<p>A documentação <strong>poderá sofrer mudanças</strong> com o avanço do projeto, então sempre <strong>acompanhe as versões mais atualizadas.</strong></p>
 
