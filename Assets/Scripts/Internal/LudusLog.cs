@@ -5,7 +5,7 @@ using System.IO;
 using Ludus.SDK.Utils;
 
 // Basicamente, utilizando como conceito primordial as tabelas de banco de dados, o nosso LOG Geral será um grande tabela, com vários logs.
-// A classe LogCell seria uma Coluna; logController seria a tabela.
+// A classe LudusLogCol seria uma Coluna; logController seria a tabela.
 // Então, cada célula do log, teria um id, título, descrição e o tempo de execução em que foi executado.
 // Depois, esses dados serão adicionados no LogController e assim serão submetidos.
 // Por enquanto, eles estão em formato de string, mas pretendemos colocá-los em JSON, e assim exportar para um banco de dados.
@@ -13,8 +13,8 @@ using Ludus.SDK.Utils;
 
 namespace Ludus.SDK.ExportData
 {
-    #region LOG_CELL 
-    // Criando a classe LogCell, que seriam as colunas da nossa tabela CreateLog.
+    #region LUDUSLOG_COL 
+    // Criando a classe LudusLogCol, que seriam as colunas da nossa tabela LudusLog.
     // Elas possuem alguns atributos.
     /*
         1   - Id: é o id da tabela a ser gerado, normalmente são representados por um número inteiro em formato de string.
@@ -25,19 +25,19 @@ namespace Ludus.SDK.ExportData
         5   - TimeElapsed: é um atributo que diz respeito ao tempo de execução do script.
      */
     [System.Serializable]
-    public class LogCell
+    public class LudusLogCol
     {
         public string id;
         public string title;
         public string description;
         public string date;
-        public LogCell(string title = "", string description = "")
+        public LudusLogCol(string title = "", string description = "")
         {
             try
             {
                 if (title == "")
                 {
-                    throw new UnityException("[LogCell-module-cell-err]: O título deve ser obrigatório. ");
+                    throw new UnityException("[LudusLogCol-module-cell-err]: O título deve ser obrigatório. ");
                 }
 
                 if (description == "")
@@ -57,11 +57,11 @@ namespace Ludus.SDK.ExportData
             }
         }
     }
-    #endregion LOG_CELL
+    #endregion LUDUSLOG_COL
 
-    #region CREATE_LOG
+    #region LUDUS_LOG
     /*
-        O CreateLog é feito para abrigar todas as colunas em apenas uma tabela; abrigar todos os objetos em um objeto-pai, para termos os dados de forma centralizada.
+        O LudusLog é feito para abrigar todas as colunas em apenas uma tabela; abrigar todos os objetos em um objeto-pai, para termos os dados de forma centralizada.
         Sobre os atributos:
         Lista LogCells - é a lista das células de log.
         Counter - serve para contar a quantidade de colunas, sem precisar usar reports.Count toda hora.
@@ -69,18 +69,18 @@ namespace Ludus.SDK.ExportData
         Data - Feito para abrigar os dados, representado de em string.
      */
     [System.Serializable]
-    public class CreateLog
+    public class LudusLog
     {
         public string title; // Título do log.
         public string description;
-        public List<LogCell> reports = new List<LogCell>(); // Cria uma lista de colunas;
+        public List<LudusLogCol> reports = new List<LudusLogCol>(); // Cria uma lista de colunas;
         private int counter = 0; // Contador de colunas.
 
         //  OBS: Esse contador é uma alternativa mais eficiente, pois ele irá sempre ser adicionado, em vez de contar os elementos da lista.
         // Também, este contador deve ser imutável, ele será utilizado com id. Por execução, ele deve ser uníco. Então, caso ocorra algum erro, ele será adicionado automaticamente
         // e o índice onde o erro ocorreu será anulado.
 
-        public CreateLog(string title = "", string description = "")
+        public LudusLog(string title = "", string description = "") // Construtor do LudusLog...
         {
             try
             {
@@ -102,9 +102,8 @@ namespace Ludus.SDK.ExportData
             {
                 throw err;
             }
-        }
-
-        public void addCell(LogCell newLog)
+        } 
+        public void addCol(LudusLogCol newLog) // Adicionar uma coluna...
         {
             try
             {
@@ -122,12 +121,11 @@ namespace Ludus.SDK.ExportData
                 throw err;
             }
         }
-
-        public void removeCellById(string id)
+        public void removeColById(string id) // Remover uma coluna pelo seu id.
         {
             try
             {
-                LogCell logToRemove = reports.Find(log => log.id == id);
+                LudusLogCol logToRemove = reports.Find(log => log.id == id);
 
                 if (logToRemove != null)
                 {
@@ -143,34 +141,12 @@ namespace Ludus.SDK.ExportData
                 throw err;
             }
         }
-
-        //public void editLogCellById(string id, string newTitle, string newDescription)
-        //{
-        //    try
-        //    {
-        //        LogCell logToEdit = reports.Find(log => log.id == id);
-
-        //        if (logToEdit != null)
-        //        {
-        //            logToEdit.title = newTitle;
-        //            logToEdit.description = newDescription;
-        //        }
-        //        else
-        //        {
-        //            throw new UnityException("[+LUDUS-createlog-err]:Célula com o id '" + id + "' para edição.");
-        //        }
-        //    }
-        //    catch (UnityException err)
-        //    {
-        //        throw err;
-        //    }
-        //} // Depreciado
-        public void exportLog()
+        public void export() // Exportar o log.
         {
             try
             {
                 string jsonToExport = "";
-                this.addCell(new LogCell("Exportação de arquivo.", "Exportando JSON."));
+                this.addCol(new LudusLogCol("Exportação de arquivo.", "Exportando JSON."));
                 jsonToExport = JsonUtility.ToJson(this);
 
                 string rootFolder = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf('/'));
@@ -200,13 +176,11 @@ namespace Ludus.SDK.ExportData
                 Debug.LogError("Erro ao exportar o arquivo: " + err.Message);
             }
         }
-
-        public void reset()
+        public void reset() // Resetar os dados do log, mas manter o seu título e id padrão,
         {
             this.reports.Clear();
         }
-
-        public void redefine(string title = "", string description = "")
+        public void redefine(string title = "", string description = "") // Redefinir todo o log, desde os seus dados, até o seu título e descrição, reaproveitando o objeto.
         {
             try
             {
@@ -229,5 +203,5 @@ namespace Ludus.SDK.ExportData
             }
         }
     }
-    #endregion CREATE_LOG
+    #endregion LUDUS_LOG
 };

@@ -8,11 +8,11 @@ public class TestingLogs : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CreateLog log = new CreateLog("Teste1232323232!","Primeiro log.");
-        log.addCell(new LogCell("[Ludus-click]","Ocorreu um clique no mouse."));
-        log.addCell(new LogCell("[Ludus-click]", "Ocorreu um clique no mouse."));
-        log.addCell(new LogCell("[Ludus-click]", "Ocorreu um clique no mouse."));
-        log.addCell(new LogCell("[Ludus-click]", "Ocorreu um clique no mouse."));
-        log.exportLog();
+        LudusLog log = new LudusLog("Teste1232323232!","Primeiro log.");
+        log.addCol(new LudusLogCol("[Ludus-click]","Ocorreu um clique no mouse."));
+        log.addCol(new LudusLogCol("[Ludus-click]", "Ocorreu um clique no mouse."));
+        log.addCol(new LudusLogCol("[Ludus-click]", "Ocorreu um clique no mouse."));
+        log.addCol(new LudusLogCol("[Ludus-click]", "Ocorreu um clique no mouse."));
+        log.export();
     } 
 }

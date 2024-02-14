@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 // Sobre as variáveis constantes com o prefixo PREFIX:
 //      Elas serão usadas como textos padronizados para os logs, isso facilita na hora de tratar erros e dar display nas
 //      mensagens, pois é um label padrão, então, se mudarmos uma vez, atualiza no código inteiro.
+// Depreciado
 
 interface IMonitorMouseData     // Essa interface é responsável por obter os dados do mouse.
 {
@@ -41,11 +42,11 @@ public class Monitor :
     //private Stopwatch timeCounter = new Stopwatch(); // This object allow to count time, to use in logs.
     // Depreciado.
 
-    private CreateLog log = new CreateLog("Monitor-exec","Execução do módulo monitor.");
+    private LudusLog log = new LudusLog("Monitor-exec","Execução do módulo monitor.");
 
     void Start()
     {
-        log.addCell(new LogCell("[+LUDUS-monitor-start]", "O script iniciou em'" + this.gameObject.name + "', id: " + this.gameObject.GetInstanceID()));
+        log.addCol(new LudusLogCol("[+LUDUS-monitor-start]", "O script iniciou em'" + this.gameObject.name + "', id: " + this.gameObject.GetInstanceID()));
       //  UnityEngine.Debug.Log("[+LUDUS-monitor-start]: O script iniciou em '" + this.gameObject.name + "',id:" + this.gameObject.GetInstanceID()); // Log mostra para o usuário que o script está em ação!
       DontDestroyOnLoad(FindObjectOfType<Canvas>());
     }
@@ -74,7 +75,7 @@ public class Monitor :
         {
             side = "direito";
         }
-        log.addCell(new LogCell("[+LUDUS-mouse-click]:", "Botão " + side + " ."));
+        log.addCol(new LudusLogCol("[+LUDUS-mouse-click]:", "Botão " + side + " ."));
       //  UnityEngine.Debug.Log("[+LUDUS-mouse-click]: O botão " + side + "."); // Mostra o log ao usuário.
     }
     public void OnPointerMove(PointerEventData eventData)
@@ -82,7 +83,7 @@ public class Monitor :
         try
         {        
             Vector3 pos = GetMousePosition();
-            log.addCell(new LogCell("[+LUDUS-mouse-move]:", "POS:(" + pos.x + ";" + pos.y + ";" + pos.z + ")"));
+            log.addCol(new LudusLogCol("[+LUDUS-mouse-move]:", "POS:(" + pos.x + ";" + pos.y + ";" + pos.z + ")"));
           //  UnityEngine.Debug.Log("[+LUDUS-mouse-move]: POS:(" + pos.x + "," + pos.y + "," + pos.z + ")");
         }
         catch (UnityException err)
@@ -123,8 +124,8 @@ public class Monitor :
     void OnSceneUnloaded(Scene scene)
     {
         Debug.Log("Cena descarregada: " + scene.name);
-        this.log.addCell(new LogCell("Descarregando cena",""));
-        this.log.exportLog();
+        this.log.addCol(new LudusLogCol("Descarregando cena",""));
+        this.log.export();
         this.log.reset();
         Destroy(this.gameObject);
     }
