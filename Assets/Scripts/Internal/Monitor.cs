@@ -1,4 +1,5 @@
 using Ludus.SDK.ExportData;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -42,13 +43,15 @@ public class Monitor :
     //private Stopwatch timeCounter = new Stopwatch(); // This object allow to count time, to use in logs.
     // Depreciado.
 
-    private LudusLog log = new LudusLog("Monitor-exec","Execução do módulo monitor.");
+    private LudusLog log = new LudusLog("monitor-exec","Execução do módulo monitor.");
 
     void Start()
     {
+        Scene scene = SceneManager.GetActiveScene();
+        log.addCol(new LudusLogCol("[+LUDUS-monitor-scene]:","O script está rodando na cena:" + scene.name));
         log.addCol(new LudusLogCol("[+LUDUS-monitor-start]", "O script iniciou em'" + this.gameObject.name + "', id: " + this.gameObject.GetInstanceID()));
       //  UnityEngine.Debug.Log("[+LUDUS-monitor-start]: O script iniciou em '" + this.gameObject.name + "',id:" + this.gameObject.GetInstanceID()); // Log mostra para o usuário que o script está em ação!
-      DontDestroyOnLoad(FindObjectOfType<Canvas>());
+        DontDestroyOnLoad(FindObjectOfType<Canvas>());
     }
 
     public Vector3 GetMousePosition() // Retorna a posição do Vector3, através do Input.mousePosition.
