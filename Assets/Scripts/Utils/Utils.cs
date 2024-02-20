@@ -21,6 +21,7 @@ namespace Ludus.SDK.Utils
                 uint i = 0;
                 while (i < bytes){
                     buffer += allowedCode[rand.Next(0,allowedCode.Length)];
+                    i++;
                 }
 
                 return buffer;
